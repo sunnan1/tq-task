@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  qode-backend:
+    build:
+      context: ./qode-backend
+      dockerfile: Dockerfile
+    container_name: qode-backend
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./qode-backend/.env:/var/www/.env
+    env_file:
+      - ./qode-backend/.env
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/usr/share/redis/data
+    networks:
+      - app-network
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.9
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - app-network
+
+  db:
+    image: mysql:8.0
+    container_name: db
+    environment:
+      MYSQL_ROOT_PASSWORD: robot@123
+      MYSQL_DATABASE: qode_task_db
+      MYSQL_USER: dev
+      MYSQL_PASSWORD: robot@123
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - app-network
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx_server
+    ports:
+      - "8000:80"
+    volumes:
+      - ./qode-backend:/var/www
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - qode-backend
+    networks:
+      - app-network
+
+  qode-frontend:
+    build:
+      context: qode-frontend
+    container_name: qode-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./qode-frontend:/usr/src/app
+    networks:
+      - app-network
+      
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  db_data:
+  redis_data:
+  elasticsearch_data:

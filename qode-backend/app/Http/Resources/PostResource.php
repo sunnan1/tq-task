@@ -15,9 +15,13 @@ class PostResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $title = $this->title;
+        if ($request->filled('locale')) {
+            $title = $request->get('locale') == 'ar' ? $this->title_ar : $this->title;
+        }
         return [
             'id' => $this->id,
-            'title' => $this->title,
+            'title' => $title,
             'description' => $this->description,
             'image' => $this->image ? Storage::disk('public')->url($this->image) : '',
             'keywords' => $this->keywords ?? '',

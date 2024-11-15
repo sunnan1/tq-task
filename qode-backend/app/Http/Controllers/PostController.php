@@ -41,7 +41,12 @@ class PostController extends Controller
     {
         try {
             $query = $request->get('query');
-            $fields = ['title', 'keywords', 'meta_title', 'meta_description'];
+            $locale = $request->get('locale');
+            if ($locale == 'ar') {
+                $fields = ['title_ar', 'keywords', 'meta_title', 'meta_description'];
+            } else {
+                $fields = ['title', 'keywords', 'meta_title', 'meta_description'];
+            }
             $results = $this->elasticsearch->searchAllColumns('posts', $query, $fields);
             $hits = $results['hits']['hits'] ?? [];
             $posts = [];
@@ -62,6 +67,7 @@ class PostController extends Controller
             }
             $post = Post::create([
                 'title' => $request->title,
+                'title_ar' => $request->title_ar,
                 'excerpt' => $request->excerpt,
                 'description' => $request->description,
                 'image' => $request->image ?? null,
@@ -97,6 +103,7 @@ class PostController extends Controller
             }
             $data = [
                 'title' => $request->title,
+                'title_ar' => $request->title_ar,
                 'excerpt' => $request->excerpt,
                 'description' => $request->description,
                 'image' => $request->image ?? null,
@@ -122,10 +129,12 @@ class PostController extends Controller
 
     public function destroy(Post $post)
     {
-        if ($post->image) {
+        try {
             Storage::disk('public')->delete($post->image);
+            $post->comments()->delete();
+            $post->delete();
+        } catch (\Exception $exception) {
+            return response()->json(['message' => $exception->getMessage()], 500);
         }
-        $post->delete();
-        return response()->json(['message' => 'Post Deleted Successfully'], 200);
     }
 }

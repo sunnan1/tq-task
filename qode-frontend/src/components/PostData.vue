@@ -1,5 +1,10 @@
 <template>
   <div>
+    <label for="">Select Language : </label>
+    <select v-model="selectedLanguage" @change="changeLanguage">
+      <option value="en">English</option>
+      <option value="ar">Arabic</option>
+    </select>
     <h1>Posts</h1>
     <input type="text" v-model="searchQuery" @input="debouncedSearch" placeholder="Search posts..." />
     <div v-for="post in posts" :key="post.id">
@@ -19,23 +24,29 @@ export default {
     return {
       posts: [],
       loading: false,
+      selectedLanguage: 'en',
       page: 1,
       searchQuery: '',
       searchTimeout: null, // Used for debouncing
     };
   },
   mounted() {
+    this.selectedLanguage = localStorage.getItem('locale');
     this.loadPosts();
     window.addEventListener('scroll', this.handleScroll);
   },
   methods: {
     loadPosts() {
       this.loading = true;
-      axios.get(`posts?page=${this.page}`).then((response) => {
+      axios.get(`posts?page=${this.page}&locale=`+this.selectedLanguage).then((response) => {
         this.posts.push(...response.data.data);
         this.page++;
         this.loading = false;
       });
+    },
+    changeLanguage(language) {
+      localStorage.setItem('locale' , language);
+      this.handleSearch();
     },
     searchPosts() {
       this.loading = true;

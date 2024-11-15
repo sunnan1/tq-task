@@ -20,7 +20,7 @@
         </li>
       </ul>
     </div>
-    <CommentSection :postId="post.id" :comments="post.comments" />
+    <CommentSection :postId="post.id" :comments="post.comments" @refreshComments="updatePostComments" />
   </div>
   </template>
   
@@ -36,9 +36,22 @@
       };
     },
     mounted() {
-      axios.get(`/${this.$route.params.id}/comment`).then((response) => {
-        this.post = response.data.data;
-      });
+        this.loadPost();
+    },
+    methods:{ 
+      loadPost() {
+        this.post = null;
+        try {
+          axios.get(`/${this.$route.params.id}/comment`).then((response) => {
+            this.post = response.data.data;
+          });  
+        } catch (error) {
+          alert(error.respose.data.message);
+        }
+      },
+      updatePostComments() {
+        this.loadPost();
+      }
     },
   };
   </script>

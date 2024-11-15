@@ -23,6 +23,7 @@ class PostRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:255',
+            'title_ar' => 'required|string|max:255',
             'excerpt' => 'required|string|max:500',
             'description' => 'required|string',
             'image' => 'nullable|image|mimes:jpg,png,jpeg|max:2048', // Max image size 2MB

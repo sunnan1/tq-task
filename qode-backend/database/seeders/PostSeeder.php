@@ -34,6 +34,7 @@ class PostSeeder extends Seeder
                     $posts[] = [
                         'id' => ++$id,
                         'title' => $faker->sentence(),
+                        'title_ar' => "هذا هو النص التجريبي لجملة.",
                         'excerpt' => $faker->text(10),
                         'description' => $faker->paragraph(3, true),
                         'image' => '',

@@ -38,5 +38,10 @@ export default {
           });
     }
   },
+  mounted() {
+    if (localStorage.getItem('locale') != 'en' || localStorage.getItem('locale') != 'ar') {
+        localStorage.setItem('locale', 'en');
+    }
+  }
 };
 </script>

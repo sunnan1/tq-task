@@ -1,6 +1,6 @@
 <template>
-    <div class="create-post-container">
-      <div class="create-post-card">
+    <div class="create-post-container" >
+      <div class="create-post-card" v-if="isAuthenticated">
         <h2 class="create-post-title">Create a New Post</h2>
         <span v-if="error">Error : {{ error }}</span>
         <form @submit.prevent="submitPost">
@@ -8,6 +8,9 @@
           <!-- Title Field -->
           <label for="title" class="form-label">Title</label>
           <input type="text" id="title" v-model="title" class="form-input" placeholder="Enter the title" required />
+          
+          <label for="title" class="form-label">Title AR</label>
+          <input type="text" id="title" v-model="title_ar" class="form-input" placeholder="Enter the title" required />
           
           <!-- Excerpt Field -->
           <label for="excerpt" class="form-label">Excerpt</label>
@@ -42,15 +45,24 @@
           
         </form>
       </div>
+      <div v-else>
+        <a @click.prevent="navigateTo('/login')">Login to Create Post</a>
+      </div>
     </div>
   </template>
   
   <script>
   import axios from '../axios.js';
   export default {
+    computed: {
+        isAuthenticated() {
+            return !!localStorage.getItem('authToken');
+        }
+    },
     data() {
       return {
         title: '',
+        title_ar: '',
         excerpt: '',
         description: '',
         image: null,
@@ -63,8 +75,11 @@
       };
     },
     methods: {
+      navigateTo(route) {
+        this.$router.push(route);
+      },
       formatDateTime() {
-        if (this.datetime) {
+        if (this.publish_at) {
             const date = new Date(this.publish_at);
             const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -82,6 +97,7 @@
         try {
             const formData = new FormData();
             formData.append('title', this.title);
+            formData.append('title_ar', this.title_ar);
             formData.append('excerpt', this.excerpt);
             formData.append('description', this.description);
             formData.append('keywords', this.tags);

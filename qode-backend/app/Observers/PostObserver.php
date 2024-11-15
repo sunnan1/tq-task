@@ -31,7 +31,7 @@ class PostObserver
      */
     public function deleted(Post $post): void
     {
-        Cache::forget('post_'.$post->id);
+        Cache::tags(['post'])->forget('post_'.$post->id);
         PostsCacheJob::dispatch();
     }
 
@@ -52,7 +52,7 @@ class PostObserver
     protected function refreshSinglePostCache($post)
     {
         $cacheKey = "post_{$post->id}";
-        Cache::forget($cacheKey);
+        Cache::tags(['post'])->forget($cacheKey);
         Cache::tags(['post'])->put($cacheKey, $post);
     }
     public function invalidateCacheAndRebuildIndividual() {

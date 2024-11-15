@@ -8,7 +8,7 @@
         Published on {{ post.published_at }}
       </p>
       <router-link :to="{ name: 'PostDetail', params: { id: post.id } }" class="read-more">Read More</router-link>
-      <p>
+      <p v-if="isAuthenticated">
         <button @click="destroy(post.id)">Remove</button>
       </p>
     </div>
@@ -18,6 +18,11 @@
 <script>
 export default {
   props: ['post'],
+  computed: {
+        isAuthenticated() {
+            return !!localStorage.getItem('authToken');
+        }
+    },
   methods: {
     destroy(id) {
       this.$emit('removePost' , id); // Emit the event to trigger the parent method

@@ -26,14 +26,13 @@
     methods: {
       submitComment() {
         if (this.newComment) {
-          
           axios.post(`/post/${this.postId}/comment/create`, { content: this.newComment } , {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('authToken')}`,
               'Content-Type': 'application/json',
             }
           }).then(() => {
-            this.$router.go(0);
+            this.$emit('refreshComments');
           });
         }
       },

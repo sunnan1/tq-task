@@ -8,6 +8,7 @@ class Post extends Model
 {
     protected $fillable = [
         'title',
+        'title_ar',
         'excerpt',
         'description',
         'image',
@@ -36,6 +37,7 @@ class Post extends Model
     {
         app(ElasticsearchService::class)->index('posts', $this->id, [
             'title' => $this->title,
+            'title_ar' => $this->title_ar,
             'excerpt' => $this->excerpt,
             'description' => $this->description,
             'keywords' => $this->keywords,

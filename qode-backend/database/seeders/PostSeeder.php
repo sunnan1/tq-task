@@ -24,8 +24,8 @@ class PostSeeder extends Seeder
             DB::table('posts')->delete();
             DB::table('users')->delete();
             $user = User::factory(1)->create();
-            $batchSize = 100;
-            $totalPosts = 1000;
+            $batchSize = 1;
+            $totalPosts = 10;
             $faker = Faker::create();
             $id = 0;
             for ($i = 0; $i < $totalPosts / $batchSize; $i++) {

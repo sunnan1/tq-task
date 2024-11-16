@@ -19,8 +19,11 @@ RUN composer install --no-scripts --no-autoloader && \
     php artisan route:cache && \
     php artisan view:cache
 
-RUN chown -R www-data:www-data /var/www \
-    && chmod -R 755 /var/www/storage
+RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+
+RUN chmod -R 775 /var/www/storage \
+    && chmod -R 775 /var/www/bootstrap/cache \
+    && chmod -R 775 /var/www/storage/framework
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

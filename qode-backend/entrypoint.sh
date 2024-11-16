@@ -14,6 +14,12 @@ php artisan optimize:clear
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
+php artisan storage:link
+
+echo "Fixing permissions..."
+chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+
 # Start PHP-FPM in the foreground
 echo "Starting PHP-FPM..."
 php-fpm
